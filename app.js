@@ -3,6 +3,7 @@ const multer = require('multer');
 const mongoose = require('mongoose');
 const path = require('path');
 const cors = require('cors');
+require('dotenv/config');
 
 const ImageModel = require('./images');
 
@@ -24,8 +25,15 @@ const upload = multer({
     storage: storage,
     fileFilter: fileFilter
 });
-
-mongoose.connect(`mongodb://hoangit123:hoangit123@ds137498.mlab.com:37498/hoang`, {
+const {
+    PORT,
+    DB_NAME,
+    DB_PORT,
+    DB_HOST,
+    DB_PASS,
+    DB_USER
+} = process.env;
+mongoose.connect(`mongodb://${DB_USER}:${DB_PASS}@${DB_HOST}:${DB_PORT}/${DB_NAME}`, {
     useCreateIndex: true,
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -35,7 +43,7 @@ mongoose.connect(`mongodb://hoangit123:hoangit123@ds137498.mlab.com:37498/hoang`
 });
 
 const app = express();
-
+app.use(cors())
 app.use(express.static(path.join(__dirname, '/')));
 
 app.get('/', (req, res) => {
@@ -68,4 +76,4 @@ app.delete('/images/:id', async (req, res) => {
     }
 })
 
-app.listen(3000);
+app.listen(PORT);
